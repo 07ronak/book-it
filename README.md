@@ -4,7 +4,7 @@ A full-stack experience booking application with secure payment flow, real-time 
 
 ## 🌐 Live Demo
 
-**Frontend:** [Coming Soon]  
+**Frontend: (Live Link)** https://book-it-pearl-ten.vercel.app/experiences
 **Backend API:** https://book-it-production.up.railway.app/
 
 ---
