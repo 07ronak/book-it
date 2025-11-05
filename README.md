@@ -4,31 +4,20 @@ A full-stack experience booking application with secure payment flow, real-time 
 
 ## 🌐 Live Demo
 
-**Frontend: (Live Link)** https://book-it-pearl-ten.vercel.app/experiences
-**Backend API:** https://book-it-production.up.railway.app/
+**Frontend:** https://book-it-pearl-ten.vercel.app/experiences  
+**Backend:** https://book-it-production.up.railway.app/
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Frontend
-
-- **Next.js 15** - React framework with App Router
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **React Hooks** - State management
-
-### Backend
-
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **Prisma ORM** - Database toolkit
-- **PostgreSQL** - Database (Neon.tech)
+**Frontend:** Next.js 15 · TypeScript · Tailwind CSS · React Hooks  
+**Backend:** Node.js · Express.js · Prisma ORM · PostgreSQL (Neon.tech)
 
 ### Deployment
 
 - **Vercel** - Frontend hosting
-- **Railway/Render** - Backend hosting
+- **Railway** - Backend hosting
 
 ---
 
