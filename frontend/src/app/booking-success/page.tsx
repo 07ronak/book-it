@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
-export default function BookingSuccessPage() {
+function BookingSuccessContent() {
   const searchParams = useSearchParams();
   const [refId, setRefId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -133,5 +133,22 @@ export default function BookingSuccessPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function BookingSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center p-4 mt-10">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-gray-300 border-t-green-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 text-sm sm:text-base">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <BookingSuccessContent />
+    </Suspense>
   );
 }
