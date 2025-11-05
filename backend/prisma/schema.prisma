@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Experience {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   @db.Text
+  about       String?  @db.Text
+  imageUrl    String
+  location    String   // e.g., "Bangalore", "Mumbai"
+  price       Float    // Base price per person
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  slots       Slot[]
+  bookings    Booking[] // ONE-TO-MANY. One experience has MANY bookings
+}
+
+model Slot {
+  id            Int      @id @default(autoincrement())
+  experienceId  Int
+  date          DateTime @db.Date // Only the date part
+  time          String   // e.g., "10:00 AM", "2:00 PM"
+  totalSlots    Int      // Total available slots for this time slot
+  bookedSlots   Int      @default(0) // Number of slots already booked
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  experience    Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade) //Experience deleted, ALL  slots automatically deletes too.
+  bookings      Booking[]
+  
+  @@unique([experienceId, date, time]) // Prevent duplicate slots, ensures each slot is unique for that experience and time.
+  @@index([experienceId, date]) // Optimize queries by experience and date
+}
+
+model Booking {
+  id            Int      @id @default(autoincrement())
+  refId         String   @unique @default(cuid()) // Unique reference ID for the booking
+  userName      String
+  email         String
+  phone         String?  // Optional phone number
+  experienceId  Int
+  slotId        Int
+  quantity      Int      @default(1) // Number of persons
+  basePrice     Float    // Price per person at time of booking
+  taxAmount     Float    // Calculated tax amount (18% GST)
+  discountAmount Float   @default(0) // Discount from promo code
+  totalAmount   Float    // Final amount paid
+  promoCode     String?  // Optional promo code used
+  status        BookingStatus @default(CONFIRMED)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  experience    Experience @relation(fields: [experienceId], references: [id], onDelete: Restrict) //If someone tries to delete an experience with existing bookings, it fails.
+  slot          Slot       @relation(fields: [slotId], references: [id], onDelete: Restrict)
+  
+  @@index([email]) // Multiple bookings can have same email
+}
+
+model PromoCode {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique // e.g. "NEW100"
+  discountType  DiscountType // "PERCENTAGE" or "FIXED"
+  discountValue Float    // e.g., 10 for 10% or 100 for ₹100
+  minAmount     Float?   // Minimum booking amount to apply promo
+  maxDiscount   Float?   // Maximum discount cap (for percentage types)
+  validFrom     DateTime
+  validUntil    DateTime
+  isActive      Boolean  @default(true)
+  usageLimit    Int?     // Optional: max number of times this code can be used
+  usageCount    Int      @default(0) // How many times it’s used
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([code, isActive]) // Optimize promo code validation queries
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  FAILED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
