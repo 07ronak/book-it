@@ -232,6 +232,73 @@ Frontend runs on `http://localhost:3000`
 
 ---
 
+## 🧪 Testing Guide for Evaluators
+
+### Available Promo Codes
+
+Try these promo codes during checkout to test the discount functionality:
+
+| Code | Type | Discount | Min Amount | Max Discount | Valid Until | Usage Limit |
+|------|------|----------|------------|--------------|-------------|-------------|
+| **NEW100** | Percentage | 10% off | ₹500 | ₹300 | Dec 31, 2027 | Unlimited |
+| **GET200** | Fixed | ₹200 off | ₹1,000 | - | Dec 31, 2026 | 50 uses |
+| **FESTIVE20** | Percentage | 20% off | ₹1,500 | ₹500 | Dec 31, 2025 | 200 uses |
+
+### Recommended Test Scenarios
+
+#### 1. **Search Functionality**
+- Try searching for **"india"** to see filtered results
+- Search by location: "Goa", "Jaipur", "Rishikesh"
+- Search by activity: "diving", "paragliding", "rafting"
+- Observe how the UI handles no results
+
+#### 2. **Booking Flow**
+- Select an experience with available slots
+- Choose date, time, and quantity
+- Apply different promo codes and verify discount calculations
+- Complete booking and note the reference ID
+- Try booking when slots are nearly full to test availability checks
+
+#### 3. **Edge Cases to Test**
+
+**Promo Code Validation:**
+- Apply promo on booking below minimum amount (should fail)
+- Use an expired/invalid code
+- Try "FESTIVE20" on a ₹1,200 booking (below ₹1,500 minimum)
+- Try "NEW100" on ₹5,000 booking (10% = ₹500, but capped at ₹300)
+
+**Slot Availability:**
+- Select a sold-out slot (should be disabled)
+- Try to book more quantity than available slots
+- Book multiple times quickly to test race condition prevention
+
+**URL Manipulation:**
+- Modify experience ID in URL: `/experiences/999` (should show not found)
+- Change query parameters on success page: `/booking-success?refId=INVALID`
+- Test with invalid slot IDs during checkout
+
+#### 4. **Security Features to Verify**
+
+- **Price Integrity:** Open browser DevTools and try changing prices in the payload - server should reject it and use database prices
+- **Promo Validation:** Backend re-validates promo codes even if frontend shows them as valid
+- **Transaction Safety:** Multiple simultaneous bookings for the same slot should not cause overbooking
+- **Usage Limits:** After using "GET200" 50 times, it should stop working
+
+#### 5. **Responsive Design**
+- Test on mobile viewport (375px width)
+- Tablet view (768px width)
+- Desktop view (1440px width)
+
+### Expected Behaviors
+
+✅ **Valid Booking:** Reference ID generated, success page shows confirmation  
+✅ **Sold Out Slot:** Slot appears grayed out and unselectable  
+✅ **Invalid Promo:** Error message with specific reason  
+✅ **Insufficient Slots:** "Only X slot(s) remaining" error message  
+✅ **Search Results:** Real-time filtering without page reload  
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
